@@ -1,0 +1,15 @@
+{
+  "name": "捏捏跑酷",
+  "intro": "一脚踩裂巧克力",
+  "version": "1.0.0",
+  "scene": "休闲玩法",
+  "permissions": [],
+  "abilities": [],
+  "mode": "免费",
+  "price": null,
+  "paid_content": null,
+  "tip": true,
+  "tip_message": "谢谢你来玩",
+  "icon": null,
+  "cover": null
+}
