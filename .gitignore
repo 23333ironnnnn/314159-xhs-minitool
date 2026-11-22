@@ -8,3 +8,11 @@ release.json
 game.zip
 __pycache__/
 .DS_Store
+
+# 每款游戏的本地投稿图片（打包脚本的输出文件名）
+icon.png
+icon.jpg
+icon.jpeg
+cover.png
+cover.jpg
+cover.jpeg

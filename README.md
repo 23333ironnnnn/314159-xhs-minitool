@@ -6,7 +6,7 @@
 
 **直接发给 AI**
 
-> 读这个仓库的 AGENTS.md，按 314159 小红书流程把「游戏路径」做成免费小工具。接关注、可用时赞赏，结尾推荐一款相关作品。请实际修改、校验并打包，把 ZIP、图标、封面、后台填写单和首发文案一次给我。只做本地交付。
+> 读这个仓库的 AGENTS.md，按 314159 小红书流程把「游戏路径」做成免费小工具。接关注、可用时赞赏，结尾推荐一款相关作品。请实际修改、校验并打包，交付 ZIP、后台填写单和首发文案。图标和封面由我按本款游戏定稿，有文件就检查，缺项先标待提供。只做本地交付。
 
 **要做付费番外时加这一句**
 
@@ -22,7 +22,7 @@
 
 ## 手动运行
 
-需要 Python 3.9+。打包已有离线产物不装 npm 依赖。先按 [适配流程](AGENTS.md) 完成游戏构建，由 AI 参照 [表单示例](release.example.json) 填入真实资料。图标和封面的相对路径从配置文件所在位置解析。
+需要 Python 3.9+。打包已有离线产物不装 npm 依赖。先按 [适配流程](AGENTS.md) 完成游戏构建，由 AI 参照 [表单示例](release.example.json) 填入真实资料。每款游戏的图标、封面及视觉说明放在本地游戏项目中，交付目录也选在这个公共工具仓库之外。表单中的图片路径相对于配置文件，可指向已定稿素材。
 
 ```sh
 python3 release.py /path/to/game/dist /path/to/new-release --form /path/to/release.json
@@ -32,6 +32,6 @@ python3 release.py /path/to/game/dist /path/to/new-release --form /path/to/relea
 
 ## 维护
 
-- 厂牌、运营与付费决策在 [AGENTS.md](AGENTS.md)。表单字段与机械检查在 [release.py](release.py)。后台小工具名称和简介各限 14 个 UTF-16 码元。
+- 适配、运营与付费流程在 [AGENTS.md](AGENTS.md)。表单字段与机械检查在 [release.py](release.py)。后台小工具名称和简介各限 14 个 UTF-16 码元。
 - 两个官方包完整保存在 `.codex/skills/`；`.agents/skills` 为仓库内发现入口。仅运行管理命令时另需 Node.js、npm 与官方版本校验。每次更新官方包都从创服当前口令取链接，先安全解压，保留旧版本，再检查引用和 CLI。
 - 本仓库初始打包规范为 1.11.1。原始归档 SHA-256 分别为开发规范 `b9e7ba8265963ed19301084e3f73d3a26ba21dcec0cea9e4dc127abc2b928ed7`、管理包 `ebc76d1a94258903a4b35726b7e25e94b452b824cd6d9cde0f2434e22900a4b3`。[开发包](https://fe-static.xhscdn.com/minitool/20261117152455/minitool-zip-builder-1.11.1.skill) · [管理包](https://fe-video-qc.xhscdn.com/fe-platform-file/104101b8326rqruuj5006b6titltg00000000038l066g4)

@@ -239,7 +239,7 @@ def build(src, out, config):
         summary = (f"文件数 {len(files)}，ZIP {pack.stat().st_size:,} 字节\nSHA-256 {digest}\n"
                    f"官方目录审计\n{before}\n官方 ZIP 审计\n{after}\n"
                    "已检查根入口、常见静态 HTML/CSS 引用、图片表单规格（如提供）与 ZIP 完整性。\n"
-                   "动态资源、业务逻辑和 SDK 调用需结合源码核对。创服模拟器、Android、iOS 待实测。\n")
+                   "动态资源、业务逻辑和 SDK 调用需结合源码核对。创服模拟器、Android、iOS 待实测，核对首屏标题和按钮是否避开状态栏与右上角胶囊。\n")
         (stage / "校验摘要.txt").write_text(summary, encoding="utf-8")
         lines = ["# 小红书发布填写单", "", "| 后台字段 | 填写内容 |", "| --- | --- |"]
         for label, value in rows:
