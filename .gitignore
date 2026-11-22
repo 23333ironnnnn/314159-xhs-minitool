@@ -1,0 +1,10 @@
+# 本地登录与单次发布资料
+.env
+.env.*
+!.env.example
+.skillhub-upload/
+session.json
+release.json
+game.zip
+__pycache__/
+.DS_Store

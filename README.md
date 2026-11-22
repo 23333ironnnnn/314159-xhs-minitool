@@ -14,6 +14,12 @@
 
 整款收费可直接说「整款付费，售价 × 元，购买后可以……」。发布后不能切换免费／付费。定价未给时保留待确认。更新工具链时在干净的仓库运行 `git pull --ff-only`，官方规范版本以当次上传页为准。
 
+## 一起做这个工具
+
+你在做哪种小工具，哪一步最费劲？欢迎提一个想法。发现小红书更新了规则，或某款手机上跑不通，也欢迎来报。直接写使用场景就可以，有相同问题也可以在已有 Issue 补充一次实测结果。
+
+[提想法或补充平台规则](https://github.com/23333ironnnnn/314159-xhs-minitool/issues/new?template=01-idea.yml) · [反馈适配或打包问题](https://github.com/23333ironnnnn/314159-xhs-minitool/issues/new?template=02-problem.yml) · [看看大家在聊什么](https://github.com/23333ironnnnn/314159-xhs-minitool/issues)
+
 ## 手动运行
 
 需要 Python 3.9+。打包已有离线产物不装 npm 依赖。先按 [适配流程](AGENTS.md) 完成游戏构建，由 AI 参照 [表单示例](release.example.json) 填入真实资料。图标和封面的相对路径从配置文件所在位置解析。

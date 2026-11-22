@@ -1,0 +1,17 @@
+name: 共创一个功能或补充平台规则
+description: 说说你做小工具时，哪一步可以更好用。
+title: "[共创] "
+body:
+  - type: textarea
+    id: idea
+    attributes:
+      label: 你希望改进什么？
+      description: 用自己的话说就好。也可以分享你在新版创服看到的变化。
+      placeholder: 比如，我想让 AI 在打包前就告诉我哪些图片被封面裁切挡住了。
+    validations:
+      required: true
+  - type: textarea
+    id: example
+    attributes:
+      label: 有没有可以对照的例子？（选填）
+      description: 可以贴公开文档、脱敏截图，或描述你希望看到的结果。请隐去账号、授权码和未公开作品信息。

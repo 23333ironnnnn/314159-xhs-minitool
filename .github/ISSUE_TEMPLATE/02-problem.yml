@@ -1,0 +1,16 @@
+name: 反馈适配或打包问题
+description: 告诉我们卡在哪一步，以及你看到的现象。
+title: "[问题] "
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: 你做了什么，出现了什么？
+      placeholder: 比如，ZIP 能上传，在安卓手机里打开后能看到封面，但点开始没有反应。
+    validations:
+      required: true
+  - type: textarea
+    id: context
+    attributes:
+      label: 可以帮忙定位的线索（选填）
+      description: 例如手机系统、小红书版本、仓库版本、脱敏后的报错。请不要贴 Cookie、Token、授权二维码或未公开的完整游戏包。
