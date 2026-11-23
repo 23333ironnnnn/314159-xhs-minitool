@@ -33,6 +33,13 @@ def require(condition, message):
         raise ValueError(message)
 
 
+def read_text(path):
+    try:
+        return path.read_text(encoding="utf-8-sig")
+    except UnicodeDecodeError:
+        raise ValueError(f"{path.name} 不是 UTF-8 编码，请转码后重新构建") from None
+
+
 def static_ref(base, raw, files, image=False):
     ref = raw.strip()
     if not ref or ref.startswith("#"):
@@ -91,8 +98,10 @@ class Entry(HTMLParser):
 
 def check_tree(source):
     require(source.is_dir() and (source / "index.html").is_file(), "构建目录根部必须有 index.html")
-    files, names = set(), set()
+    files, names, warnings = set(), set(), []
     for p in source.rglob("*"):
+        if p.name == ".DS_Store":  # Finder recreates it on every visit; leave it out of the package
+            continue
         rel = p.relative_to(source)
         require(not p.is_symlink(), f"构建目录含软链接 {rel}")
         require(not any(x.startswith(".") or x in {"__MACOSX", "node_modules"} for x in rel.parts),
@@ -110,20 +119,20 @@ def check_tree(source):
     require(sum(p.stat().st_size for p in files) <= 30 * MIB, "解压后合计超过 30 MiB")
     entry = source / "index.html"
     parser = Entry(entry, files)
-    parser.feed(entry.read_text(encoding="utf-8-sig"))
+    parser.feed(read_text(entry))
     parser.close()
-    for p in files:
+    for p in sorted(files):
         if p.suffix.lower() not in {".html", ".css", ".js", ".json", ".svg"}:
             continue
-        body = p.read_text(encoding="utf-8-sig")
+        body = read_text(p)
         if p.suffix.lower() == ".css":
             css_refs(body, p, files)
         for match in re.finditer(r"data:[^,\s]{0,200};base64,([A-Za-z0-9+/]+)(={0,2})", body, re.I):
             size = (len(match[1]) * 6) // 8
             require(size <= MIB, f"{p.name} 包含超过 1 MiB 的 Base64，请使用独立资源")
             if size > 100 * 1024:
-                print(f"WARN: {p.name} 的 Base64 超过 100 KiB，建议使用包内文件", file=sys.stderr)
-    return sorted(files)
+                warnings.append(f"WARN: {p.name} 的 Base64 超过 100 KiB，建议使用包内文件")
+    return sorted(files), warnings
 
 
 def image_info(path):
@@ -179,6 +188,7 @@ def prepare_form(config, stage):
     scene, mode = field("scene"), field("mode")
     require(scene in [MISSING] + SCENES and mode in {MISSING, "免费", "付费"}, "场景标签或付费模式无效")
     price, content = data.get("price"), field("paid_content")
+    require(mode == "付费" or data.get("paid_content") is None, "paid_content 只属于付费工具，其他情况请留 null")
     if price is not None:
         from decimal import Decimal
         require(mode == "付费" and re.fullmatch(r"[0-9]+(?:\.[0-9]{1,2})?", str(price)) and Decimal(str(price)) > 0,
@@ -193,7 +203,10 @@ def prepare_form(config, stage):
         require(isinstance(data[key], str) and data[key].strip(), f"{key} 路径无效")
         source = (config.parent / data[key]).resolve()
         require(source.is_file() and 0 < source.stat().st_size <= limit * MIB, f"{key} 缺失或超过 {limit} MiB")
-        width, height = image_info(source)
+        try:
+            width, height = image_info(source)
+        except (ValueError, struct.error) as exc:
+            raise ValueError(f"{key} 图片无效：{exc}") from None
         require(width > 0 and height > 0 and width * ratio[1] == height * ratio[0], f"{key} 尺寸 {width}×{height}，需 {ratio[0]}:{ratio[1]}")
         target = stage / (key + source.suffix.lower())
         shutil.copyfile(source, target)
@@ -221,7 +234,7 @@ def build(src, out, config):
     source, output = src.resolve(), out.absolute()
     require(not output.exists() and not output.is_symlink(), "交付目录已存在，请使用新路径")
     require(not output.resolve().is_relative_to(source), "交付目录必须在游戏构建目录之外")
-    files = check_tree(source)
+    files, warnings = check_tree(source)
     before = audit(source)
     output.parent.mkdir(parents=True, exist_ok=True)
     with tempfile.TemporaryDirectory(dir=output.parent) as temp:
@@ -229,7 +242,8 @@ def build(src, out, config):
         stage.mkdir()
         rows = prepare_form(config, stage)
         pack = stage / "game.zip"
-        with ZipFile(pack, "x", ZIP_DEFLATED) as z:
+        # Clamp pre-1980 mtimes (reproducible builds, unpacked archives) instead of aborting.
+        with ZipFile(pack, "x", ZIP_DEFLATED, strict_timestamps=False) as z:
             for f in files:
                 z.write(f, f.relative_to(source).as_posix())
         with ZipFile(pack) as z:
@@ -237,6 +251,7 @@ def build(src, out, config):
         after = audit(pack)
         digest = hashlib.sha256(pack.read_bytes()).hexdigest()
         summary = (f"文件数 {len(files)}，ZIP {pack.stat().st_size:,} 字节\nSHA-256 {digest}\n"
+                   + "".join(line + "\n" for line in warnings) +
                    f"官方目录审计\n{before}\n官方 ZIP 审计\n{after}\n"
                    "已检查根入口、常见静态 HTML/CSS 引用、图片表单规格（如提供）与 ZIP 完整性。\n"
                    "动态资源、业务逻辑和 SDK 调用需结合源码核对。创服模拟器、Android、iOS 待实测，核对首屏标题和按钮是否避开状态栏与右上角胶囊。\n")

@@ -22,7 +22,7 @@
 
 ## 手动运行
 
-需要 Python 3.9+。打包已有离线产物不装 npm 依赖。先按 [适配流程](AGENTS.md) 完成游戏构建，由 AI 参照 [表单示例](release.example.json) 填入真实资料。每款游戏的图标、封面及视觉说明放在本地游戏项目中，交付目录也选在这个公共工具仓库之外。表单中的图片路径相对于配置文件，可指向已定稿素材。
+需要 Python 3.9+。打包已有离线产物不装 npm 依赖。先按 [适配流程](AGENTS.md) 完成游戏构建，由 AI 参照 [配置示例](release.example.json) 填入真实资料。每款游戏的图标、封面及视觉说明放在本地游戏项目中，交付目录也选在这个公共工具仓库之外。表单中的图片路径相对于配置文件，可指向已定稿素材。
 
 ```sh
 python3 release.py /path/to/game/dist /path/to/new-release --form /path/to/release.json
